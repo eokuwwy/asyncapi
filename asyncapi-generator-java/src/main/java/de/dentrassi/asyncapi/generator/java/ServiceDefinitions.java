@@ -19,12 +19,7 @@ package de.dentrassi.asyncapi.generator.java;
 import static java.util.Arrays.asList;
 import static java.util.Optional.empty;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import de.dentrassi.asyncapi.AsyncApi;
 import de.dentrassi.asyncapi.Topic;
@@ -70,6 +65,25 @@ public class ServiceDefinitions {
 
     public Map<String, VersionedService> getLatest() {
         return this.latest;
+    }
+
+    public static ServiceDefinitions build(final AsyncApi api, final boolean validateTopicSyntax, final Map<String, String> substitutions) {
+        HashSet<Topic> topics = new HashSet<>();
+
+        for (Topic topic : api.getTopics()) {
+            String[] segments = topic.getName().split("\\.");
+
+            for (int i=0; i<segments.length; i++) {
+                if (substitutions.get(segments[i]) != null) {
+                    topic.setName(topic.getName().replace(segments[i], substitutions.get(segments[i])));
+                }
+            }
+
+            topics.add(topic);
+        }
+
+        api.setTopics(topics);
+        return ServiceDefinitions.build(api, validateTopicSyntax);
     }
 
     public static ServiceDefinitions build(final AsyncApi api, final boolean validateTopicSyntax) {

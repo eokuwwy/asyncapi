@@ -72,11 +72,6 @@ public class TopicInformationTest {
         TopicInformation.fromString("a.1.b.c");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void failVersion1() {
-        TopicInformation.fromString("a.X.b.c.d");
-    }
-
     private void assertTopicInformation(final TopicInformation ti, final String service, final String version, final String type, final String resources, final String action,
             final Status status) {
 

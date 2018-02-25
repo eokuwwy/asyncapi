@@ -94,7 +94,6 @@ public class YamlParser {
 
         api.setBaseTopic(asOptionalString("baseTopic", this.document).orElse(null));
         api.setHost(asOptionalString("host", this.document).orElse("localhost"));
-        api.setSchemes(asSet("schemes", this.document));
         api.setInformation(parseInfo(asMap("info", this.document)));
         api.setTopics(parseTopics(asMap("topics", this.document)));
 

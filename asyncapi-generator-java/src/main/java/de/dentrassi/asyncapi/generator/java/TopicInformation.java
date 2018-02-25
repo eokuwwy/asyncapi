@@ -56,6 +56,10 @@ public class TopicInformation {
     }
 
     public String getVersion() {
+        if (this.version == null || this.version.isEmpty()) {
+            return "1";
+        }
+
         return this.version;
     }
 
@@ -120,9 +124,7 @@ public class TopicInformation {
         if (service == null || service.isEmpty()) {
             throw new IllegalArgumentException("Wrong topic syntax");
         }
-        if (version.isEmpty()) {
-            throw new IllegalArgumentException("Wrong topic syntax");
-        }
+
         if (type == null || type.isEmpty()) {
             throw new IllegalArgumentException("Wrong topic syntax");
         }

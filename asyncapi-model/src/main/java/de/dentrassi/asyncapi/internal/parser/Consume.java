@@ -26,6 +26,18 @@ public final class Consume {
     private Consume() {
     }
 
+    public static Map<String, ?> asMap(final String key, final Map<String, ?> map, final Map<String, String> substitutions) {
+        String substitutionKey = key;
+
+        if (key != null) {
+            if (substitutions.get(key) != null) {
+                substitutionKey = substitutions.get(key);
+            }
+        }
+
+        return required(key, asOptionalMap(substitutionKey, map));
+    }
+
     public static Map<String, ?> asMap(final String key, final Map<String, ?> map) {
         return required(key, asOptionalMap(key, map));
     }

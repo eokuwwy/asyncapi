@@ -27,14 +27,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -119,6 +112,8 @@ public class Generator {
 
         private final Set<GeneratorExtension> extensions = new HashSet<>();
 
+        private Map<String, String> substitutions = new HashMap<>();
+
         private Builder() {
         }
 
@@ -150,6 +145,11 @@ public class Generator {
             return this;
         }
 
+        public Builder substitutions(final Map<String, String> substitutions) {
+            this.substitutions = substitutions;
+            return this;
+        }
+
         public Generator build(final AsyncApi api) {
 
             final LinkedList<Exception> errors = new LinkedList<>();
@@ -161,7 +161,7 @@ public class Generator {
                 throw e;
             }
 
-            return new Generator(api, new Options(this.options), this.validateTopicSyntax, new ArrayList<>(this.extensions));
+            return new Generator(api, new Options(this.options), this.validateTopicSyntax, new ArrayList<>(this.extensions), this.substitutions);
         }
     }
 
@@ -189,6 +189,7 @@ public class Generator {
 
     private final AsyncApi api;
     private final boolean validateTopicSyntax;
+    private Map<String, String> subsitutions;
     private List<GeneratorExtension> extensions = new ArrayList<>();
 
     private final Options options;
@@ -212,13 +213,14 @@ public class Generator {
 
     private final ServiceDefinitions serviceDefinitions;
 
-    private Generator(final AsyncApi api, final Options options, final boolean validateTopicSyntax, final List<GeneratorExtension> extensions) {
+    private Generator(final AsyncApi api, final Options options, final boolean validateTopicSyntax, final List<GeneratorExtension> extensions, final Map<String, String> substitutions) {
         this.api = api;
         this.options = options;
         this.validateTopicSyntax = validateTopicSyntax;
         this.extensions = extensions;
+        this.subsitutions = substitutions;
 
-        this.serviceDefinitions = ServiceDefinitions.build(this.api, this.validateTopicSyntax);
+        this.serviceDefinitions = ServiceDefinitions.build(this.api, this.validateTopicSyntax, this.subsitutions);
     }
 
     public void generate() throws IOException {
